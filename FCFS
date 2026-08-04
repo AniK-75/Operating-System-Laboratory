@@ -1,0 +1,51 @@
+n = int(input("Enter the number of elements: "))
+
+p_id = []
+for i in range(n):
+    element = input(f"Enter Process ID {i+1}: ")
+    p_id.append(element)
+
+at = []
+for i in range(n):
+    a = int(input(f"Enter Arrival Time for {p_id[i]}: "))
+    at.append(a)
+
+bt = []
+for i in range(n):
+    b = int(input(f"Enter Burst Time for {p_id[i]}: "))  
+    bt.append(b)
+
+
+ct = [0] * n
+tat = [0] * n
+wt = [0] * n
+
+current_time = 0
+for i in range(n):   
+    if current_time < at[i]:
+        current_time = at[i]
+          
+    current_time += bt[i]
+    ct[i] = current_time
+
+total_tat = 0
+total_wt = 0
+for i in range(n):
+    tat[i] = ct[i] - at[i]
+    wt[i] = tat[i] - bt[i]
+    total_tat += tat[i]
+    total_wt += wt[i]
+
+avg_tat = total_tat/n
+avg_wt = total_wt/n
+    
+
+print("Results")
+print(f"P_ID : {p_id}")
+print(f"AT   : {at}")
+print(f"BT   : {bt}")
+print(f"CT   : {ct}")
+print(f"TAT  : {tat}")
+print(f"WT   : {wt}")
+print(f"Avarage TAT  : {avg_tat}")
+print(f"Avarage WT   : {avg_wt}")

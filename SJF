@@ -1,0 +1,115 @@
+n = int(input("Enter the number of elements: "))
+
+p_id = []
+for i in range(n):
+    element = input(f"Enter Process ID {i+1}: ")
+    p_id.append(element)
+
+at = []
+for i in range(n):
+    a = int(input(f"Enter Arrival Time for {p_id[i]}: "))
+    at.append(a)
+
+bt = []
+for i in range(n):
+    b = int(input(f"Enter Burst Time for {p_id[i]}: "))
+    bt.append(b)
+
+
+# ---------------- SJF NON-PREEMPTIVE ----------------
+ct1 = [0] * n
+tat1 = [0] * n
+wt1 = [0] * n
+completed1 = [False] * n
+
+time = 0
+count = 0
+
+while count < n:
+    idx = -1
+    min_bt = 9999
+
+    for i in range(n):
+        if at[i] <= time and completed1[i] == False:
+            if bt[i] < min_bt:
+                min_bt = bt[i]
+                idx = i
+            elif bt[i] == min_bt:
+                if at[i] < at[idx]:
+                    idx = i
+
+    if idx == -1:
+        time += 1
+        continue
+
+    time += bt[idx]
+    ct1[idx] = time
+    tat1[idx] = ct1[idx] - at[idx]
+    wt1[idx] = tat1[idx] - bt[idx]
+    completed1[idx] = True
+    count += 1
+
+
+# ---------------- SJF PREEMPTIVE (SRTF) ----------------
+ct2 = [0] * n
+tat2 = [0] * n
+wt2 = [0] * n
+rt = bt[:]
+completed2 = [False] * n
+
+time = 0
+count = 0
+
+while count < n:
+    idx = -1
+    min_rt = 9999
+
+    for i in range(n):
+        if at[i] <= time and completed2[i] == False and rt[i] > 0:
+            if rt[i] < min_rt:
+                min_rt = rt[i]
+                idx = i
+            elif rt[i] == min_rt:
+                if at[i] < at[idx]:
+                    idx = i
+
+    if idx == -1:
+        time += 1
+        continue
+
+    rt[idx] -= 1
+    time += 1
+
+    if rt[idx] == 0:
+        ct2[idx] = time
+        tat2[idx] = ct2[idx] - at[idx]
+        wt2[idx] = tat2[idx] - bt[idx]
+        completed2[idx] = True
+        count += 1
+
+
+# ---------------- PRINT RESULTS ----------------
+print("\n===== SJF NON-PREEMPTIVE =====")
+print("P_ID\tAT\tBT\tCT\tTAT\tWT")
+total_tat1 = 0
+total_wt1 = 0
+for i in range(n):
+    print(f"{p_id[i]}\t{at[i]}\t{bt[i]}\t{ct1[i]}\t{tat1[i]}\t{wt1[i]}")
+    total_tat1 += tat1[i]
+    total_wt1 += wt1[i]
+
+print(f"\nAverage TAT = {total_tat1 / n}")
+print(f"Average WT = {total_wt1 / n}")
+
+
+print("\n===== SJF PREEMPTIVE (SRTF) =====")
+print("P_ID\tAT\tBT\tCT\tTAT\tWT")
+total_tat2 = 0
+total_wt2 = 0
+for i in range(n):
+    print(f"{p_id[i]}\t{at[i]}\t{bt[i]}\t{ct2[i]}\t{tat2[i]}\t{wt2[i]}")
+    total_tat2 += tat2[i]
+    total_wt2 += wt2[i]
+
+print(f"\nAverage TAT = {total_tat2 / n}")
+print(f"Average WT = {total_wt2 / n}")

@@ -1,0 +1,78 @@
+n = int(input("Enter the number of elements: "))
+
+p_id = []
+for i in range(n):
+    element = input(f"Enter Process ID {i+1}: ")
+    p_id.append(element)
+
+at = []
+for i in range(n):
+    a = int(input(f"Enter Arrival Time for {p_id[i]}: "))
+    at.append(a)
+
+bt = []
+for i in range(n):
+    b = int(input(f"Enter Burst Time for {p_id[i]}: "))
+    bt.append(b)
+
+quantum = int(input("Enter Time Quantum: "))
+
+rt = []
+for i in range(n):
+    rt.append(bt[i])
+
+ct = [0] * n
+tat = [0] * n
+wt = [0] * n
+visited = [False] * n
+
+queue = []
+for i in range(n):
+    if at[i] == 0:
+        queue.append(i)
+        visited[i] = True
+
+time = 0
+
+while len(queue) > 0:
+    idx = queue.pop(0)
+
+    if at[idx] > time:
+        time = at[idx]
+
+    if rt[idx] > quantum:
+        time = time + quantum
+        rt[idx] = rt[idx] - quantum
+    else:
+        time = time + rt[idx]
+        rt[idx] = 0
+
+    for i in range(n):
+        if visited[i] == False and at[i] <= time:
+            queue.append(i)
+            visited[i] = True
+
+    if rt[idx] == 0:
+        ct[idx] = time
+    else:
+        queue.append(idx)
+
+for i in range(n):
+    tat[i] = ct[i] - at[i]
+    wt[i] = tat[i] - bt[i]
+
+print("\nPID\tAT\tBT\tCT\tTAT\tWT")
+for i in range(n):
+    print(f"{p_id[i]}\t{at[i]}\t{bt[i]}\t{ct[i]}\t{tat[i]}\t{wt[i]}")
+
+total_tat = 0
+total_wt = 0
+for i in range(n):
+    total_tat = total_tat + tat[i]
+    total_wt = total_wt + wt[i]
+
+avg_tat = total_tat / n
+avg_wt = total_wt / n
+
+print(f"\nAverage Turnaround Time = {avg_tat:.2f}")
+print(f"Average Waiting Time = {avg_wt:.2f}")

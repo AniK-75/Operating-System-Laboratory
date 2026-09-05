@@ -1,0 +1,119 @@
+n = int(input("Enter the number of elements: "))
+
+p_id = []
+for i in range(n):
+    element = input(f"Enter Process ID {i+1}: ")
+    p_id.append(element)
+
+at = []
+for i in range(n):
+    a = int(input(f"Enter Arrival Time for {p_id[i]}: "))
+    at.append(a)
+
+bt = []
+for i in range(n):
+    b = int(input(f"Enter Burst Time for {p_id[i]}: "))
+    bt.append(b)
+
+pt = []
+for i in range(n):
+    c = int(input(f"Enter Priority for {p_id[i]}: "))
+    pt.append(c)
+
+
+# ---------------- PRIORITY NON-PREEMPTIVE ----------------
+ct1 = [0] * n
+tat1 = [0] * n
+wt1 = [0] * n
+completed1 = [False] * n
+
+time = 0
+count = 0
+
+while count < n:
+    idx = -1
+    min_pt = 9999
+
+    for i in range(n):
+        if at[i] <= time and completed1[i] == False:
+            if pt[i] < min_pt:
+                min_pt = pt[i]
+                idx = i
+            elif pt[i] == min_pt:
+                if at[i] < at[idx]:
+                    idx = i
+
+    if idx == -1:
+        time += 1
+        continue
+
+    time += bt[idx]
+    ct1[idx] = time
+    tat1[idx] = ct1[idx] - at[idx]
+    wt1[idx] = tat1[idx] - bt[idx]
+    completed1[idx] = True
+    count += 1
+
+
+print("\n===== PRIORITY NON-PREEMPTIVE =====")
+print("P_ID\tAT\tBT\tPT\tCT\tTAT\tWT")
+total_tat1 = 0
+total_wt1 = 0
+for i in range(n):
+    print(f"{p_id[i]}\t{at[i]}\t{bt[i]}\t{pt[i]}\t{ct1[i]}\t{tat1[i]}\t{wt1[i]}")
+    total_tat1 += tat1[i]
+    total_wt1 += wt1[i]
+
+print(f"\nAverage TAT = {total_tat1 / n}")
+print(f"Average WT = {total_wt1 / n}")
+
+
+# ---------------- PRIORITY PREEMPTIVE ----------------
+ct2 = [0] * n
+tat2 = [0] * n
+wt2 = [0] * n
+rt = bt[:]
+completed2 = [False] * n
+
+time = 0
+count = 0
+
+while count < n:
+    idx = -1
+    min_pt = 9999
+
+    for i in range(n):
+        if at[i] <= time and completed2[i] == False and rt[i] > 0:
+            if pt[i] < min_pt:
+                min_pt = pt[i]
+                idx = i
+            elif pt[i] == min_pt:
+                if at[i] < at[idx]:
+                    idx = i
+
+    if idx == -1:
+        time += 1
+        continue
+
+    rt[idx] -= 1
+    time += 1
+
+    if rt[idx] == 0:
+        ct2[idx] = time
+        tat2[idx] = ct2[idx] - at[idx]
+        wt2[idx] = tat2[idx] - bt[idx]
+        completed2[idx] = True
+        count += 1
+
+
+print("\n===== PRIORITY PREEMPTIVE =====")
+print("P_ID\tAT\tBT\tPT\tCT\tTAT\tWT")
+total_tat2 = 0
+total_wt2 = 0
+for i in range(n):
+    print(f"{p_id[i]}\t{at[i]}\t{bt[i]}\t{pt[i]}\t{ct2[i]}\t{tat2[i]}\t{wt2[i]}")
+    total_tat2 += tat2[i]
+    total_wt2 += wt2[i]
+
+print(f"\nAverage TAT = {total_tat2 / n}")
+print(f"Average WT = {total_wt2 / n}")

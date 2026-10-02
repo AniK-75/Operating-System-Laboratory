@@ -1,0 +1,18 @@
+n = int(input("Enter the number of requests: "))
+requests = []
+for i in range(n):
+    req = int(input(f"Enter request {i+1}: "))
+    requests.append(req)
+
+h = int(input("Enter the initial head position: "))
+
+sum = 0
+for i in range(n):
+    if(requests[i] > h):
+        add = requests[i] - h
+    else:
+        add = h - requests[i]
+    sum += add
+    h = requests[i]
+    
+print("Sum of head movements: ", sum)

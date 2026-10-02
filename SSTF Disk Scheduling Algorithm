@@ -1,0 +1,24 @@
+n = int(input("Enter the number of requests: "))
+requests = []
+for i in range(n):
+    req = int(input(f"Enter request {i+1}: "))
+    requests.append(req)
+
+h = int(input("Enter the initial head position: "))
+
+total_head_movement = 0
+
+while len(requests) > 0:
+    min_dist = float('inf')
+    min_index = -1
+    
+    for i in range(len(requests)):
+        dist = abs(requests[i] - h)
+        if dist < min_dist:
+            min_dist = dist
+            min_index = i
+            
+    total_head_movement += min_dist
+    h = requests.pop(min_index)
+
+print("Sum of head movements:", total_head_movement)
